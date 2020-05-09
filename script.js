@@ -1,8 +1,9 @@
-const express = require('express');
-const Joi = require('joi');
-const app = express();
-app.use(express.json());
+const express = require('express'); // Import express.
+const Joi = require('joi'); // Import Joi.
+const app = express(); // Create express application on the app variable.
+app.use(express.json()); // Use a JSON file.
 
+// Give data to the server.
 const customers = [
 	{title: 'George', id: 1},
 	{title: 'Josh', id: 2},
@@ -14,11 +15,20 @@ const customers = [
 // Read request handlers.
 // Display the Massage when the URL consists of.
 app.get('/', (req, res) => {
+	// Send a 200 success status back to the client.
+	res.status(200);
 	res.send('Welcome to Tony\'s REST API!');
 });
 
 // Display the list of customers when URL consists of API customers.
 app.get('/api/customers', (req, res) => {
+	if (!customers)
+	{
+		res.status(404).send('<h2 style="font-family: Malgun Gothic;">Database not connected!</h2>');
+	}
+
+	// Send a 200 success status back to the client.
+	res.status(200);
 	res.send(customers);
 });
 
@@ -30,9 +40,11 @@ app.get('/api/customers/:id', (req, res) => {
 	// If there is no customer ID then display an error message.
 	if (!customer)
 	{
-		res.status(404).send('<h2 style="font-family: Malgun Gothic; color: darkred;">There is no customer with that specific ID number!</h2>');
+		res.status(404).send('<h2 style="font-family: Malgun Gothic;">There is no customer with that specific ID number!</h2>');
 	}
 
+	// Send a 200 success status back to the client.
+	res.status(200);
 	res.send(customer);
 });
 
@@ -67,7 +79,7 @@ app.put('/api/customers/:id', (req, res) => {
 	// If there is no customer ID then display an error message.
 	if (!customer)
 	{
-		res.status(404).send('<h2 style="font-family: Malgun Gothic; color: darkred;">Customer NOT Found!</h2>');
+		res.status(404).send('<h2 style="font-family: Malgun Gothic;">Customer NOT Found!</h2>');
 	}
 
 	const {error} = validateCustomer(req.body);
@@ -91,7 +103,7 @@ app.delete('/api/customers/:id', (req, res) => {
 	// If there is no customer ID then display an error message.
 	if (!customer)
 	{
-		res.status(404).send('<h2 style="font-family: Malgun Gothic; color: darkred;">Customer not found! Can\'t delete!</h2>');
+		res.status(404).send('<h2 style="font-family: Malgun Gothic;">Customer not found! Can\'t delete!</h2>');
 	}
 
 	const index = customers.indexOf(customer);
@@ -103,6 +115,7 @@ app.delete('/api/customers/:id', (req, res) => {
 // Validate Information.
 function validateCustomer(customer) {
 
+	// Name must have a minimum of 3 characters.
 	const schema = {
 		title: Joi.string().min(3).required()
 	};
